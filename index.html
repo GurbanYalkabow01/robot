@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ovozli Robot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2d2d2d;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Ovozli Robot</h1>
+        <p>Foydalanuvchi buyruqlarini gapirib bering.</p>
+        <button id="startButton">Ovozni Qabul Qilish</button>
+        <p id="response"></p>
+    </div>
+
+    <script>
+        // Ovozli buyruqlarni qabul qilish uchun SpeechRecognition API
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'uz-UZ'; // O'zbek tilini tanlash
+        recognition.continuous = false; // Ovozli buyruq faqat bir marta qabul qilinsin
+
+        const startButton = document.getElementById('startButton');
+        const responseText = document.getElementById('response');
+
+        // Ovozli buyruqni boshlash
+        startButton.addEventListener('click', () => {
+            recognition.start();
+            responseText.textContent = 'Ovoz qabul qilinmoqda...';
+        });
+
+        // Ovozli buyruq natijasi
+        recognition.onresult = function(event) {
+            const userCommand = event.results[0][0].transcript;
+            console.log("Foydalanuvchi so'zlari:", userCommand);
+            
+            // Buyruqga asoslangan javoblarni berish
+            let reply = '';
+            if (userCommand.includes('salom')) {
+                reply = 'Salom! Yordam bera olishim mumkinmi?';
+            } else if (userCommand.includes('qanday vaqt')) {
+                const currentTime = new Date().toLocaleTimeString();
+                reply = `Hozirgi vaqt: ${currentTime}`;
+            } else {
+                reply = 'Kechirasiz, tushunmadim.';
+            }
+
+            responseText.textContent = reply;
+            speak(reply); // Ovozli javob berish
+        };
+
+        // Ovozli javob berish
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'uz-UZ';
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+
+</body>
+</html>
